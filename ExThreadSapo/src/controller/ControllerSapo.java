@@ -2,12 +2,14 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public class ControllerSapo extends Thread{
 	
 	private int distanciaSalto;
 	private int distanciaCorrida;
 	private int numSapo;
+	
 	
 	private static List<Integer> rank = new ArrayList<Integer>();
 	
@@ -25,7 +27,7 @@ public class ControllerSapo extends Thread{
 	@Override
 	public void run() {
 		iniciarCorrida();
-		super.run();
+
 	}
 	
 	private void iniciarCorrida() {
@@ -36,15 +38,23 @@ public class ControllerSapo extends Thread{
 			distanciaPercorrida += salto;
 			
 			System.out.println("Sapo " + numSapo + " Salto: " + salto + " distancia: " + distanciaPercorrida);
+		}	
+		
+		synchronized (rank) {
+			rank.add(numSapo);
+			System.out.println("Sapo: " + numSapo + " ultrapassou a distancia, Posição: " + rank.lastIndexOf(numSapo));			
 		}
-		rank.add(numSapo);
-		System.out.println("Sapo: " + numSapo + " ultrapassou a distancia, Posição: " + rank.lastIndexOf(numSapo));
+
+		
 	}
-	
+
+
 	public static void mostrarRank() {
 		System.out.println(" ===== Rank de chegada ===== ");
+		int x = 1;
 		for(int sapo: rank) {
-			System.out.println("Sapo: " + sapo);
+			System.out.println("posição # "+x+": "+ "Sapo "+sapo);
+			x++;
 		}
 	}
 }
